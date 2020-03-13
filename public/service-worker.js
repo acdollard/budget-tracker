@@ -7,16 +7,18 @@ const FILES_TO_CACHE = [
     '/icons/icon-192x192.png',
     '/icons/icon-512x512.png',
   ];
+
   
   const CACHE_NAME = "static-cache-v2";
   const DATA_CACHE_NAME = "data-cache-v1";
   
   // install
   self.addEventListener("install", function(evt) {
-    evt.waitUntil(
-      caches.open(CACHE_NAME).then(cache => {
-        console.log("Your files were pre-cached successfully!");
-        return cache.addAll(FILES_TO_CACHE);
+      evt.waitUntil(
+          caches.open(CACHE_NAME).then(cache => {
+              console.log("Your files were pre-cached successfully!");
+              console.log("Hello, fwend")
+              return cache.addAll(FILES_TO_CACHE);
       })
     );
   
@@ -44,15 +46,17 @@ const FILES_TO_CACHE = [
   // fetch
   self.addEventListener("fetch", function(evt) {
     if (evt.request.url.includes("/api/")) {
+        console.log("Hi, there's an API call going on")
       evt.respondWith(
         caches.open(DATA_CACHE_NAME).then(cache => {
           return fetch(evt.request)
             .then(response => {
               // If the response was good, clone it and store it in the cache.
               if (response.status === 200) {
+                  console.log("Here's the response! " + response)
                 cache.put(evt.request.url, response.clone());
               }
-  
+              console.log(response);
               return response;
             })
             .catch(err => {
